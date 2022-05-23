@@ -1,0 +1,20 @@
+name: lando-symfony-boilerplate
+recipe: symfony
+config:
+  webroot: public
+  php: '8.0'
+  via: apache:2.4
+  database: mysql:5.7
+  port: 3306
+  cache: redis
+  xdebug: false
+services:
+  database:
+    creds:
+      database: db
+      # username: symfony
+      # password: symfony
+      # host: database
+excludes:
+  - vendor
+app_mount: disabled
