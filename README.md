@@ -1,16 +1,54 @@
-# lando-symfony-boilerplate
-Lando boilerplate with Symfony recipe
+# 🚀 Lando Symfony Boilerplate 🎼
 
-# Installation
+# Table of contents
+
+# 📋 Requirements
+
+---
+
+- [Docker](http://docker.com)
+- [Lando](http://lando.dev)
+
+# ⚡ Install
+
+---
 
 1. Modify the configuration to your needs
+2. Run `lando start`
 
-2. Run ```lando start```
+# 🔧 Configuration
 
-# Database configuration
+---
 
-1. Change creds in `.lndo.yaml` file.
+```yaml
+*# .lando.yaml*
+name: lando-symfony-boilerplate
+recipe: symfony
+config:
+  webroot: public
+  php: '8.0'
+  via: apache:2.4
+  database: mysql:5.7
+  port: 3306
+  cache: redis
+  xdebug: false
+services:
+  database:
+    creds:
+      database: db
+      # username: symfony
+      # password: symfony
+      # host: database
+excludes:
+  - vendor
+app_mount: disabled%
+```
 
-2. Change creds in `.env` file
+Change the database credentials to your needs. Then update it in the `.env` file
 
-3. Rebuild the app with ```lando rebuild```
+```bash
+*# .env
+DATABASE_URL="mysql://symfony:symfony@database:3306/db?serverVersion=5.7&charset=utf8mb4"*
+```
+
+⚠️ If you made any changes in the lando configuration, then run `lando rebuild`
