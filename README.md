@@ -1,7 +1,5 @@
 # 🚀 Lando Symfony Boilerplate 🎼
 
-# Table of contents
-
 # 📋 Requirements
 
 ---
@@ -21,7 +19,7 @@
 ---
 
 ```yaml
-*# .lando.yaml*
+# .lando.yaml
 name: lando-symfony-boilerplate
 recipe: symfony
 config:
@@ -47,7 +45,7 @@ app_mount: disabled%
 Change the database credentials to your needs. Then update it in the `.env` file
 
 ```bash
-*# .env
+# .env
 DATABASE_URL="mysql://symfony:symfony@database:3306/db?serverVersion=5.7&charset=utf8mb4"*
 ```
 
