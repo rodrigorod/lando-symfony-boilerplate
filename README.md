@@ -39,14 +39,14 @@ services:
       # host: database
 excludes:
   - vendor
-app_mount: disabled%
+app_mount: disabled
 ```
 
 Change the database credentials to your needs. Then update it in the `.env` file
 
 ```bash
 # .env
-DATABASE_URL="mysql://symfony:symfony@database:3306/db?serverVersion=5.7&charset=utf8mb4"*
+DATABASE_URL="mysql://symfony:symfony@database:3306/db?serverVersion=5.7&charset=utf8mb4"
 ```
 
 ⚠️ If you made any changes in the lando configuration, then run `lando rebuild`
