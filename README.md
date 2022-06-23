@@ -37,8 +37,6 @@ services:
       # username: symfony
       # password: symfony
       # host: database
-excludes:
-  - vendor
 app_mount: disabled
 ```
 
