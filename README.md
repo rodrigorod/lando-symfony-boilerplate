@@ -24,7 +24,7 @@ name: lando-symfony-boilerplate
 recipe: symfony
 config:
   webroot: public
-  php: '8.0'
+  php: '8.1'
   via: apache:2.4
   database: mysql:5.7
   port: 3306
