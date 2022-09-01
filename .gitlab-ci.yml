@@ -1,0 +1,54 @@
+image: devwithlando/php:8.1-apache-4
+
+#---------------------------------------------------------
+# Tests
+#---------------------------------------------------------
+
+.test:
+  extends:
+    - .default_config
+  stage: test
+  before_script:
+    - composer install --optimize-autoloader --classmap-authoritative --no-scripts
+  only:
+    - merge_requests
+
+test:phpcpd:
+  extends: .test
+  script:
+    - composer test-phpcpd
+
+test:phpcs:
+  extends: .test
+  script:
+    - composer standards-check
+
+test:phpmd:
+  extends: .test
+  script:
+    - composer test-phpmd
+
+test:phpstan:
+  extends: .test
+  script:
+    - php vendor/bin/phpstan analyse -c phpstan.neon  --ansi --no-progress -vvv --memory-limit=-1  --error-format=junit > phpstan-report.xml
+  artifacts:
+    reports:
+      junit: phpstan-report.xml
+
+test:phpunit:
+  extends: .test
+  script:
+    - php bin/phpunit --coverage-text --colors=never --log-junit phpunit-report.xml
+  artifacts:
+    reports:
+      junit: phpunit-report.xml
+
+test:twig:
+  extends: .test
+  script:
+    - composer test-twig
+
+.default_config:
+  tags:
+    - docker
