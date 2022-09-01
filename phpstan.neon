@@ -1,0 +1,12 @@
+parameters:
+    level: 7
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    bootstrapFiles:
+        - vendor/autoload.php
+    paths:
+        - src
+        - tests
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-doctrine/extension.neon
