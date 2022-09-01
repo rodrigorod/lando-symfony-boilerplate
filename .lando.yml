@@ -12,7 +12,6 @@ services:
   database:
     creds:
       database: db
-      # username: symfony
-      # password: symfony
-      # host: database
-app_mount: disabled
+      username: symfony
+      password: symfony
+      host: database
