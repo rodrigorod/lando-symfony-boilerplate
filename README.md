@@ -48,3 +48,25 @@ DATABASE_URL="mysql://symfony:symfony@database:3306/db?serverVersion=5.7&charset
 ```
 
 ⚠️ If you made any changes in the lando configuration, then run `lando rebuild`
+
+## Coding standards / Unit tests
+
+**Run tests**
+
+```sh
+lando composer tests
+```
+
+**Fix coding standards automatically**
+```sh
+lando composer standards-fix
+```
+
+**Running each test separately**
+```sh
+lando composer test-phpcpd
+lando composer test-phpmd
+lando composer test-phpstan
+lando composer test-phpunit
+lando composer test-twig
+```
