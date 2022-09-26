@@ -1,0 +1,20 @@
+framework:
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+
+parameters:
+    mailer.sender: '%env(MAILER_SENDER)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    App\Mailer\:
+        resource: '../../src/Mailer/*'
+
+    App\Mailer\MailManager:
+        lazy: true
+        bind:
+            $sender: '%mailer.sender%'

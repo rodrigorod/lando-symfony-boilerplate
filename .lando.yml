@@ -1,0 +1,30 @@
+name: carmeet
+recipe: symfony
+config:
+  webroot: public
+  php: '8.1'
+  via: apache:2.4
+  database: mysql:5.7
+  port: 3306
+  cache: redis
+  xdebug: true
+services:
+  database:
+    creds:
+      database: dbCarmeet
+      username: symfony
+      password: symfony
+      host: database
+  mailhog:
+    type: mailhog
+    portforward: 1025
+  phpmyadmin:
+    type: phpmyadmin
+    portforward: 8081
+    hosts:
+      - database
+  appserver:
+      overrides:
+        environment:
+          PHP_IDE_CONFIG: "serverName=appserver"
+          XDEBUG_SESSION_START: lando

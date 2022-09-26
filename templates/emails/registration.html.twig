@@ -1,0 +1,14 @@
+{% extends '@emails/default.html.twig' %}
+
+{% block title %}
+    {% if title is defined %}
+        {{ title }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if message is defined %}
+        {{ message|raw }}
+    {% endif %}
+    <a href="{{ url }}">Confirmez votre addresse mail.</a>
+{% endblock %}

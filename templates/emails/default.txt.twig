@@ -1,0 +1,17 @@
+{% extends '@emails/layouts/plain.txt.twig' %}
+
+{% block title %}
+    {% if title is defined %}
+        {{ title }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if message is defined %}
+        {{ message|striptags }}
+    {% endif %}
+
+    {% if extra is defined %}
+        {{ extra|striptags }}
+    {% endif %}
+{% endblock %}

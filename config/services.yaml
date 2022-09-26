@@ -1,0 +1,60 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+    App\:
+        resource: '../src/*'
+        exclude:
+            - '../src/DependencyInjection'
+            - '../src/Entity/'
+            - '../src/EventListener/'
+            - '../src/HttpClient'
+            - '../src/Mailer/'
+            - '../src/Migrations/'
+            - '../src/Security/User/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+    App\Api\:
+        resource: '../src/Api/*/*'
+        exclude:
+            - '../src/Api/*/DependencyInjection'
+            - '../src/Api/*/Entity'
+            - '../src/Api/*/EventListener'
+            - '../src/Api/*/Tests'
+            - '../src/Api/*/Util'
+        tags: ['controller.service_arguments']
+
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    # Secured Token System
+
+    app.token.cleaner:
+        class: App\Security\Util\TokenCleaner
+        arguments:
+            - '@App\Security\Repository\TokenRequestRepository'
+            - false
+
+    app.token.random_generator:
+        class: App\Security\Generator\RandomGenerator
+    app.token.generator:
+        class: App\Security\Generator\TokenGenerator
+        arguments:
+            - '%kernel.secret%'
+            - '@app.token.random_generator'
+
+    App\Security\Helper\TokenHelperInterface:
+        alias: app.token.helper
+
+    app.token.helper:
+        class: App\Security\Helper\TokenHelper
+        arguments:
+            - '@app.token.generator'
+            - '@app.token.cleaner'
+            - '@App\Security\Repository\TokenRequestRepository'
+            - 3600
+            - 3600

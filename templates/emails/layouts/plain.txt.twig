@@ -1,0 +1,7 @@
+{% apply spaceless %}
+    {% if block('title') is defined %}
+        {% block title %}{% endblock %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+{% endapply %}
