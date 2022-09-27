@@ -1,0 +1,13 @@
+The <info>%command.name%</info> command generates a new trait.
+
+<info>php %command.full_name% FooBar</info>
+
+If the arguments are missing, the command will ask for the arguments name interactively.
+
+You can specify the Service/Class/Interface to inject in a second argument please provide the namespace.
+This can be like <info>App\Foo\Bar\FooBarInterface</info>
+
+You can specify the property name of your Service/Class/Interface that you inject in a third argument.
+This can be like <info>fooBar</info>
+
+<info>php %command.full_name% FooBarTrait FooBarInterface foobar </info>
