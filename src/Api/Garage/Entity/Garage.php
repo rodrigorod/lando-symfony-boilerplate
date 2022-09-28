@@ -53,9 +53,8 @@ class Garage implements GarageInterface
      */
     protected UserInterface $user;
 
-    public function __construct(UserInterface $user) {
+    public function __construct() {
         $this->cars = new ArrayCollection();
-        $this->user = $user;
     }
 
     public function getId(): int
