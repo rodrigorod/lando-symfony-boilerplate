@@ -29,5 +29,5 @@
 ###< lexik/jwt-authentication-bundle ###
 
 ###> editor hidden folders ###
-/.idea/
-/.vscode/
+.idea/*
+.vscode/*
