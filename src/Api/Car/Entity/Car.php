@@ -4,10 +4,12 @@ namespace App\Api\Car\Entity;
 
 use App\Api\Garage\Entity\Garage;
 use App\Api\Garage\Entity\GarageInterface;
+use App\DependencyInjection\TimerAwareTrait;
 use App\Repository\CarRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use DateTime;
 
 /**
  * @ORM\Entity(repositoryClass=CarRepository::class)
@@ -16,6 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Car implements CarInterface
 {
+    use TimerAwareTrait;
+
     /**
      * Car currently owned by user.
      */
@@ -168,6 +172,8 @@ class Car implements CarInterface
 
     public function __construct(array $values = [])
     {
+        $tihs->createdAt = new DateTime();
+
         foreach ([
             'ownershipStatus',
             'brand',

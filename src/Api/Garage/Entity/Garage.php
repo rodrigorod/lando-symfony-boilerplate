@@ -6,12 +6,14 @@ use App\Api\Car\Entity\Car;
 use App\Api\Car\Entity\CarInterface;
 use App\Api\User\Entity\User;
 use App\Api\User\Entity\UserInterface;
+use App\DependencyInjection\TimerAwareTrait;
 use App\Repository\GarageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use DateTime;
 
 /**
  * @ORM\Entity(repositoryClass=GarageRepository::class)
@@ -20,6 +22,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Garage implements GarageInterface
 {
+    use TimerAwareTrait;
+
     /**
      * Garage id.
      *
@@ -55,6 +59,7 @@ class Garage implements GarageInterface
 
     public function __construct() {
         $this->cars = new ArrayCollection();
+        $this->createdAt = new DateTime();
     }
 
     public function getId(): int

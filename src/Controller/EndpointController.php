@@ -8,10 +8,6 @@ use App\DependencyInjection\SerializerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use LogicException;
-use Symfony\Component\Serializer\SerializerInterface;
 
 abstract class EndpointController
 {
@@ -131,6 +127,16 @@ abstract class EndpointController
     protected function buildNotFoundResponse(?string $content = null): Response
     {
         return new Response($content, Response::HTTP_NOT_FOUND, [
+            'Content-Type' => 'application/json',
+        ]);
+    }
+
+    /**
+     * Build unauthorized response.
+     */
+    protected function buildUnauthorizedResponse(?string $content = null): Response
+    {
+        return new Response('Unauthorized', Response::HTTP_UNAUTHORIZED, [
             'Content-Type' => 'application/json',
         ]);
     }

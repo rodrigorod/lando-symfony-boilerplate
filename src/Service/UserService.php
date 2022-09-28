@@ -37,12 +37,8 @@ class UserService
      */
     public function registerUser(array $credentials): UserInterface
     {
-        $user = new User();
-
-        $user->setEmail($credentials['email'])
-            ->setUsername($credentials['username'])
-            ->setPassword($this->passwordHasher->hashPassword($user, $credentials['password']))
-        ;
+        $user = new User(['username' => $credentials['username'], 'email' => $credentials['email']]);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $credentials['password']));
 
         try {
             $this->em->persist($user);
@@ -62,6 +58,7 @@ class UserService
      *
      * @param string $token
      *  Secured token
+     * @throws Exception
      */
     public function activateUser(string $token): UserInterface
     {
@@ -75,12 +72,15 @@ class UserService
             );
         }
 
-        $user
-            ->setActive(true)
+        $user->setActive(true)
             ->setActivatedAt(new DateTime())
         ;
 
-        $this->em->flush();
+        try {
+            $this->em->flush();
+        } catch (Exception $e) {
+            throw new Exception(sprintf('An error occurred : %s', $e->getMessage()));
+        }
 
         // Activation token can be used only once, remove it.
         $this->tokenHelper->removeTokenRequest($token);

@@ -63,7 +63,7 @@ class CarController extends EndpointController
         $garage = $this->garageService->getGarage($user->getId());
 
         if ($garage->getId() !== $car->getGarage()->getId()) {
-            return $this->buildNotFoundResponse('Permission denied.');
+            return $this->buildUnauthorizedResponse();
         }
 
         $payload = $this->serializer->deserialize(
@@ -87,7 +87,13 @@ class CarController extends EndpointController
      */
     public function delete(Car $car, Request $request): Response
     {
+        $user = $this->getUser();
         $this->logger->info(sprintf('CarController::delete - Deleting Car id : %s from Garage : %s', $car->getId(), $car->getGarage()->getId()));
+        $garage = $this->garageService->getGarage($user->getId());
+
+        if ($garage->getId() !== $car->getGarage()->getId()) {
+            return $this->buildUnauthorizedResponse();
+        }
 
         try {
             $this->carRepository->remove($car);

@@ -4,9 +4,13 @@ namespace App\Api\User\Entity;
 
 use App\Api\Garage\Entity\Garage;
 use App\Api\Garage\Entity\GarageInterface;
+use App\DependencyInjection\SecurityAwareTrait;
+use App\DependencyInjection\TimerAwareTrait;
 use App\Repository\UserRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -17,6 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    use TimerAwareTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -104,6 +110,29 @@ class User implements UserInterface
      * @Assert\Type(type=GarageInterface::class)
      */
     protected GarageInterface $garage;
+
+    /**
+     * User profile.
+     *
+     * @ORM\Column(type="object", nullable=true)
+     */
+    protected ?ProfileInterface $profile;
+
+    /**
+     * User constructor.
+     *
+     * @param array $values
+     *  User data
+     */
+    public function __construct(array $values = [])
+    {
+        foreach ([
+            'username',
+            'email',
+        ] as $property) {
+            $this->{$property} = $values[$property];
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -255,6 +284,24 @@ class User implements UserInterface
         }
 
         $this->garage = $garage;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getProfile(): ?ProfileInterface
+    {
+        return $this->profile;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setProfile(?ProfileInterface $profile): self
+    {
+        $this->profile = $profile;
 
         return $this;
     }

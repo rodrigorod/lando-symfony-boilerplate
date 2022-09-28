@@ -69,5 +69,18 @@ interface UserInterface extends PasswordAuthenticatedUserInterface, UserSecurity
      * Set account activation date.
      */
     public function setActivatedAt(?DateTimeInterface $activatedAt): self;
+
+    /**
+     * Get user profile.
+     */
+    public function getProfile(): ?ProfileInterface;
+
+    /**
+     * Set user profile.
+     *
+     * @param ProfileInterface $profile
+     *  Profile
+     */
+    public function setProfile(?ProfileInterface $profile): self;
 }
 
