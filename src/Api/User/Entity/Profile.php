@@ -19,7 +19,7 @@ class Profile implements ProfileInterface
      *
      * @Assert\Type("string")
      *
-     * @Groups({"view"})
+     * @Groups({"profile"})
      */
     protected string $image;
 
@@ -29,7 +29,7 @@ class Profile implements ProfileInterface
      * @Assert\Type("string")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"profile"})
      */
     protected string $firstName;
 
@@ -39,19 +39,9 @@ class Profile implements ProfileInterface
      * @Assert\Type("string")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"profile"})
      */
     protected string $lastName;
-
-    /**
-     * Clubs.
-     *
-     * @Assert\Type("array")
-     * @Assert\NotNull()
-     *
-     * @Groups({"view"})
-     */
-    protected array $clubs = [];
 
     /**
      * Interests.
@@ -59,7 +49,7 @@ class Profile implements ProfileInterface
      * @Assert\Type("array")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"profile"})
      */
     protected array $interests = [];
 
@@ -69,7 +59,7 @@ class Profile implements ProfileInterface
      * @Assert\Type("integer")
      * @Assert\GreaterThanOrEqual(0)
      *
-     * @Groups({"view"})
+     * @Groups({"profile"})
      */
     protected int $followersCount = 0;
 
@@ -79,7 +69,7 @@ class Profile implements ProfileInterface
      * @Assert\Type("integer")
      * @Assert\GreaterThanOrEqual(0)
      *
-     * @Groups({"view"})
+     * @Groups({"profile"})
      */
     protected int $followingCount = 0;
 
@@ -114,14 +104,6 @@ class Profile implements ProfileInterface
     public function getLastName(): string
     {
         return $this->lastName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getClubs(): array
-    {
-        return $this->clubs;
     }
 
     /**

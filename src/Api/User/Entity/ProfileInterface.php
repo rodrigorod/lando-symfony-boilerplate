@@ -34,14 +34,6 @@ interface ProfileInterface
     public function getLastName(): string;
 
     /**
-     * Get user clubs joined.
-     *
-     * @return array
-     *  Clubs
-     */
-    public function getClubs(): array;
-
-    /**
      * Get user interests.
      *
      * @return array
@@ -65,9 +57,27 @@ interface ProfileInterface
      */
     public function getFollowingCount(): int;
 
+    /**
+     * Get user creation date.
+     *
+     * @return DateTimeInterface
+     *  Date
+     */
     public function getCreatedAt(): DateTimeInterface;
 
+    /**
+     * Get user updated date.
+     *
+     * @return null|DateTimeInterface
+     *  Date
+     */
     public function getUpdatedAt(): ?DateTimeInterface;
 
+    /**
+     * Set user updated date.
+     *
+     * @param null|DateTimeInterface $updatedAt
+     *  Date
+     */
     public function setUpdatedAt(?DateTimeInterface $updatedAt): self;
 }
