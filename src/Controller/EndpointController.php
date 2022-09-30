@@ -18,15 +18,15 @@ abstract class EndpointController
      *
      * @param Request $request
      *   Incoming request
-     * @param bool $array
+     * @param bool $isArray
      *   Define return type as array or string
      *
      * @return array|resource|string
      *   Request content
      */
-    protected function getContentFromRequest(Request $request, bool $array = true): mixed
+    protected function getContentFromRequest(Request $request, bool $isArray = true): mixed
     {
-        if (false === $array) {
+        if (false === $isArray) {
             return $request->getContent();
         }
 
