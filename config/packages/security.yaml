@@ -30,6 +30,7 @@ security:
 
     access_control:
       - { path: ^/api/user, roles: PUBLIC_ACCESS }
+      - { path: ^/api/club/list, roles: PUBLIC_ACCESS }
       - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 when@test:
     security:
