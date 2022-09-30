@@ -51,7 +51,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Api/Post/Entity'
                 prefix: 'App\Api\Post\Entity'
                 alias: App\Api\Post
-
+            App\Api\Category\Entity:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Api/Category/Entity'
+                prefix: 'App\Api\Category\Entity'
+                alias: App\Api\Category
 when@test:
     doctrine:
         dbal:

@@ -7,10 +7,14 @@ use App\Api\Garage\Entity\GarageInterface;
 use App\DependencyInjection\TimerAwareTrait;
 use App\Repository\CarRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Api\Category\Entity\Category;
 
 /**
  * @ORM\Entity(repositoryClass=CarRepository::class)
@@ -174,9 +178,15 @@ class Car implements CarInterface
      */
     protected ?GarageInterface $garage = null;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Category::class, inversedBy="cars")
+     */
+    protected Collection $categories;
+
     public function __construct(array $values = [])
     {
         $this->createdAt = new DateTime();
+        $this->categories = new ArrayCollection();
 
         foreach ([
             'ownershipStatus',
@@ -391,15 +401,52 @@ class Car implements CarInterface
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getGarage(): ?GarageInterface
     {
         return $this->garage;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setGarage(?GarageInterface $garage): self
     {
         $this->garage = $garage;
 
         return $this;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeCategory(Category $category): self
+    {
+        $this->categories->removeElement($category);
+
+        return $this;
+    }
 }
+

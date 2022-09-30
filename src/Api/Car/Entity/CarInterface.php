@@ -2,7 +2,9 @@
 
 namespace App\Api\Car\Entity;
 
+use App\Api\Category\Entity\Category;
 use App\Api\Garage\Entity\GarageInterface;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Uid\Uuid;
 
 /**
@@ -193,4 +195,28 @@ interface CarInterface
      *  Garage
      */
     public function setGarage(?GarageInterface $garage): self;
+
+    /**
+     * Get car categories.
+     *
+     * @return Collection
+     *  Categories
+     */
+    public function getCategories(): Collection;
+
+    /**
+     * Add category.
+     *
+     * @param Category $category
+     *  Category
+     */
+    public function addCategory(Category $category): self;
+
+    /**
+     * Remove category.
+     *
+     * @param Category $category
+     *  Category
+     */
+    public function removeCategory(Category $category): self;
 }
