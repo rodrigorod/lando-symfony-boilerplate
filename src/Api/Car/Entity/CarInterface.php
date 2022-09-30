@@ -3,6 +3,7 @@
 namespace App\Api\Car\Entity;
 
 use App\Api\Garage\Entity\GarageInterface;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Interface CarInterface.
@@ -12,10 +13,10 @@ interface CarInterface
     /**
      * Car id.
      *
-     * @return int
+     * @return string
      *  Unique identifier
      */
-    public function getId(): int;
+    public function getId(): string;
 
     /**
      * Car image.

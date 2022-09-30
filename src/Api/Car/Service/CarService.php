@@ -26,7 +26,7 @@ class CarService
     /**
      * Creates a car from given data & persist it into database.
      *
-     * @param string $data
+     * @param array $data
      *  Data
      *
      * @throws Exception
@@ -34,14 +34,9 @@ class CarService
      * @return Car
      *  Car
      */
-    public function createCar(string $data): Car
+    public function createCar(array $data): Car
     {
-        $car = $this->serializer->deserialize(
-            $data,
-            Car::class,
-            'json',
-            ['groups' => 'create']
-        );
+        $car = new Car($data);
 
         // bind car to garage
         $garage = $this->garageService->getGarage($this->getUser()->getId());

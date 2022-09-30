@@ -40,7 +40,7 @@ class CarController extends EndpointController
      */
     public function create(Request $request): Response
     {
-        $requestContent = $this->getContentFromRequest($request, false);
+        $requestContent = (array) $this->getContentFromRequest($request);
 
         try {
             $car = $this->carService->createCar($requestContent);
@@ -51,6 +51,14 @@ class CarController extends EndpointController
         $this->logger->info(sprintf('CarController::create - Car id : %s created for Garage : %s', $car->getId(), $car->getGarage()->getId()));
 
         return $this->buildEntityResponse($car, $request, [], ['create']);
+    }
+
+    /**
+     * @Route("/{id}", name="get", methods={"GET"})
+     */
+    public function get(Car $car, Request $request): Response
+    {
+        return $this->buildEntityResponse($car, $request);
     }
 
     /**

@@ -6,10 +6,11 @@ use App\Api\Garage\Entity\Garage;
 use App\Api\Garage\Entity\GarageInterface;
 use App\DependencyInjection\TimerAwareTrait;
 use App\Repository\CarRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
-use DateTime;
 
 /**
  * @ORM\Entity(repositoryClass=CarRepository::class)
@@ -39,15 +40,16 @@ class Car implements CarInterface
      * Car id.
      *
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
      *
      * @Assert\Unique()
-     * @Assert\Type(type="integer")
+     * @Assert\Uuid()
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
-    protected int $id;
+    protected Uuid $id;
 
     /**
      * Car image.
@@ -55,6 +57,8 @@ class Car implements CarInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      * @Assert\Type(type="string")
+     *
+     * @Groups({"garage"})
      */
     protected ?string $image = null;
 
@@ -66,7 +70,7 @@ class Car implements CarInterface
      * @Assert\Type(type="string")
      * @Assert\NotBlank()
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected string $ownershipStatus;
 
@@ -78,7 +82,7 @@ class Car implements CarInterface
      * @Assert\Type(type="string")
      * @Assert\NotBlank()
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected string $brand;
 
@@ -90,7 +94,7 @@ class Car implements CarInterface
      * @Assert\Type(type="string")
      * @Assert\NotBlank()
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected string $model;
 
@@ -102,7 +106,7 @@ class Car implements CarInterface
      * @Assert\Type(type="integer")
      * @Assert\NotNull()
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected int $year;
 
@@ -113,7 +117,7 @@ class Car implements CarInterface
      *
      * @Assert\Type(type="string")
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected ?string $trim = null;
 
@@ -124,7 +128,7 @@ class Car implements CarInterface
      *
      * @Assert\Type(type="array")
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected array $modifications = [];
 
@@ -136,7 +140,7 @@ class Car implements CarInterface
      * @Assert\Type(type="integer")
      * @Assert\NotNull()
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected int $horsePower;
 
@@ -148,7 +152,7 @@ class Car implements CarInterface
      * @Assert\Type(type="integer")
      * @Assert\NotNull()
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected int $torque;
 
@@ -159,7 +163,7 @@ class Car implements CarInterface
      *
      * @Assert\Type(type="string")
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "view", "garage"})
      */
     protected ?string $description = null;
 
@@ -172,7 +176,7 @@ class Car implements CarInterface
 
     public function __construct(array $values = [])
     {
-        $tihs->createdAt = new DateTime();
+        $this->createdAt = new DateTime();
 
         foreach ([
             'ownershipStatus',
@@ -202,7 +206,7 @@ class Car implements CarInterface
     /**
      * {@inheritDoc}
      */
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
