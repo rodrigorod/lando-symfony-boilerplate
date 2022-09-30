@@ -15,8 +15,6 @@ trait TimerAwareTrait
 {
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @Groups({"view"})
      */
     protected DateTimeInterface $createdAt;
 

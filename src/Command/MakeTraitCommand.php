@@ -60,8 +60,6 @@ final class MakeTraitCommand extends AbstractMaker
             $defaultTraitName,
         );
 
-        Validator::classExists($this->service);
-
         $this->property = $io->ask(
             sprintf('Choose a property name (e.g. <fg=yellow>%s</>)', Str::asLowerCamelCase($defaultTraitName)),
             Str::asLowerCamelCase($defaultTraitName),
