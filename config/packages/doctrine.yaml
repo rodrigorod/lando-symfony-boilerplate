@@ -39,6 +39,18 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Api/Garage/Entity'
                 prefix: 'App\Api\Garage\Entity'
                 alias: App\Api\Garage
+            App\Api\Club\Entity:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Api/Club/Entity'
+                prefix: 'App\Api\Club\Entity'
+                alias: App\Api\Club
+            App\Api\Post\Entity:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Api/Post/Entity'
+                prefix: 'App\Api\Post\Entity'
+                alias: App\Api\Post
 
 when@test:
     doctrine:
