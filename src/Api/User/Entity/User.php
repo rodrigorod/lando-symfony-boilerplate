@@ -2,16 +2,21 @@
 
 namespace App\Api\User\Entity;
 
+use App\Api\Club\Entity\Club;
+use App\Api\Club\Entity\ClubInterface;
 use App\Api\Garage\Entity\Garage;
 use App\Api\Garage\Entity\GarageInterface;
-use App\DependencyInjection\SecurityAwareTrait;
+use App\Api\Post\Entity\Post;
 use App\DependencyInjection\TimerAwareTrait;
 use App\Repository\UserRepository;
 use DateTime;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -25,15 +30,16 @@ class User implements UserInterface
 
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
      *
      * @Assert\Type(type="integer")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"user", "profile", "view"})
      */
-    protected int $id;
+    protected Uuid $id;
 
     /**
      * @ORM\Column(type="string", length=50, unique=true)
@@ -41,7 +47,7 @@ class User implements UserInterface
      * @Assert\Type(type="string")
      * @Assert\NotBlank()
      *
-     * @Groups({"view"})
+     * @Groups({"user", "profile", "view"})
      */
     protected string $username;
 
@@ -52,7 +58,7 @@ class User implements UserInterface
      * @Assert\Email()
      * @Assert\NotBlank()
      *
-     * @Groups({"view"})
+     * @Groups({"user", "profile", "view"})
      */
     protected string $email;
 
@@ -62,7 +68,7 @@ class User implements UserInterface
      * @Assert\Type(type="array")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"user"})
      */
     protected ?array $roles = [];
 
@@ -72,7 +78,7 @@ class User implements UserInterface
      * @Assert\Type(type="string")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"user"})
      */
     protected string $password;
 
@@ -85,7 +91,7 @@ class User implements UserInterface
      * @Assert\Type(type="boolean")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"user"})
      */
     protected bool $active = false;
 
@@ -98,7 +104,7 @@ class User implements UserInterface
      * @Assert\Type(type=DateTimeInterface::class)
      * @Assert\LessThanOrEqual("now")
      *
-     * @Groups({"view"})
+     * @Groups({"user"})
      */
     protected ?DateTimeInterface $activatedAt = null;
 
@@ -108,6 +114,8 @@ class User implements UserInterface
      * @ORM\OneToOne(targetEntity=Garage::class, mappedBy="user", cascade={"persist", "remove"})
      *
      * @Assert\Type(type=GarageInterface::class)
+     *
+     * @Groups({"user", "view", "profile"})
      */
     protected GarageInterface $garage;
 
@@ -115,8 +123,25 @@ class User implements UserInterface
      * User profile.
      *
      * @ORM\Column(type="object", nullable=true)
+     *
+     * @Groups({"user", "view", "profile"})
      */
     protected ?ProfileInterface $profile;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Club::class, mappedBy="members")
+     * @ORM\JoinTable(name="club_members")
+     *
+     * @Groups({"user", "clubs"})
+     */
+    protected Collection $clubs;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="user")
+     *
+     * @Groups({"user", "profile"})
+     */
+    protected Collection $posts;
 
     /**
      * User constructor.
@@ -132,12 +157,14 @@ class User implements UserInterface
         ] as $property) {
             $this->{$property} = $values[$property];
         }
+
+        $this->clubs = new ArrayCollection();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getId(): ?int
+    public function getId(): string
     {
         return $this->id;
     }
@@ -254,7 +281,7 @@ class User implements UserInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getActivatedAt(): ?DateTimeInterface
     {
@@ -262,7 +289,7 @@ class User implements UserInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setActivatedAt(?DateTimeInterface $activatedAt): self
     {
@@ -297,12 +324,53 @@ class User implements UserInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setProfile(?ProfileInterface $profile): self
     {
         $this->profile = $profile;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getClubs(): Collection
+    {
+        return $this->clubs;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addClub(ClubInterface $club): self
+    {
+        if (!$this->clubs->contains($club)) {
+            $this->clubs[] = $club;
+            $club->addMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function removeClub(ClubInterface $club): self
+    {
+        if ($this->clubs->removeElement($club)) {
+            $club->removeMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
     }
 }

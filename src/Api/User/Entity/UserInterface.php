@@ -2,9 +2,12 @@
 
 namespace App\Api\User\Entity;
 
+use App\Api\Club\Entity\ClubInterface;
 use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface as UserSecurityInterface;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Interface UserInterface.
@@ -13,8 +16,11 @@ interface UserInterface extends PasswordAuthenticatedUserInterface, UserSecurity
 {
     /**
      * Get User id.
+     *
+     * @return string
+     *  Unique identifier
      */
-    public function getId(): ?int;
+    public function getId(): string;
 
     /**
      * Get User username.
@@ -78,9 +84,41 @@ interface UserInterface extends PasswordAuthenticatedUserInterface, UserSecurity
     /**
      * Set user profile.
      *
-     * @param ProfileInterface $profile
+     * @param null|ProfileInterface $profile
      *  Profile
      */
     public function setProfile(?ProfileInterface $profile): self;
+
+    /**
+     * Get user following clubs.
+     *
+     * @return Collection<ClubInterface>
+     *  Clubs
+     */
+    public function getClubs(): Collection;
+
+    /**
+     * Add club.
+     *
+     * @param ClubInterface $club
+     *  Club
+     */
+    public function addClub(ClubInterface $club): self;
+
+    /**
+     * Remove club.
+     *
+     * @param ClubInterface $club
+     *  Club
+     */
+    public function removeClub(ClubInterface $club): self;
+
+    /**
+     * Get user posts.
+     *
+     * @return Collection
+     *  Posts
+     */
+    public function getPosts(): Collection;
 }
 
