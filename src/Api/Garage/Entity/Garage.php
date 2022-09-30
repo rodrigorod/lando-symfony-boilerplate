@@ -3,17 +3,17 @@
 namespace App\Api\Garage\Entity;
 
 use App\Api\Car\Entity\Car;
-use App\Api\Car\Entity\CarInterface;
 use App\Api\User\Entity\User;
 use App\Api\User\Entity\UserInterface;
 use App\DependencyInjection\TimerAwareTrait;
 use App\Repository\GarageRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
-use DateTime;
 
 /**
  * @ORM\Entity(repositoryClass=GarageRepository::class)
@@ -27,23 +27,24 @@ class Garage implements GarageInterface
     /**
      * Garage id.
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Id()
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class="doctrine.uuid_generator")
      *
      * @Assert\Unique()
      * @Assert\Type("integer")
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "garage"})
      */
-    protected int $id;
+    protected Uuid $id;
 
     /**
      * Garage car list.
      *
      * @ORM\OneToMany(targetEntity=Car::class, mappedBy="garage")
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create", "garage"})
      */
     protected ?Collection $cars;
 
@@ -53,7 +54,7 @@ class Garage implements GarageInterface
      * @ORM\OneToOne(targetEntity=User::class, inversedBy="garage", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      *
-     * @Groups(groups={"create", "view"})
+     * @Groups(groups={"create"})
      */
     protected UserInterface $user;
 
@@ -62,11 +63,17 @@ class Garage implements GarageInterface
         $this->createdAt = new DateTime();
     }
 
-    public function getId(): int
+    /**
+     * {@inheritDoc}
+     */
+    public function getId(): string
     {
         return $this->id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getUser(): UserInterface
     {
         return $this->user;

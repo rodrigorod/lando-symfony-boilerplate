@@ -12,15 +12,15 @@ interface GarageInterface
     /**
      * Get garage id.
      *
-     * @return int
+     * @return string
      *  Unique identifier
      */
-    public function getId(): int;
+    public function getId(): string;
 
     /**
      * Get garage cars.
      *
-     * @return null|Collection<int, Car>
+     * @return null|Collection<Car>
      *  Car list
      */
     public function getCars(): ?Collection;

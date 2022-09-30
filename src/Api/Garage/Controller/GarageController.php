@@ -6,6 +6,8 @@ use App\Api\Car\Entity\Car;
 use App\Api\Garage\Entity\Garage;
 use App\Api\Garage\Service\GarageService;
 use App\Controller\EndpointController;
+use App\DependencyInjection\EntityManagerAwareTrait;
+use App\DependencyInjection\LoggerAwareTrait;
 use App\DependencyInjection\SecurityAwareTrait;
 use App\DependencyInjection\ValidatorAwareTrait;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,10 +24,10 @@ class GarageController extends EndpointController
 {
     use ValidatorAwareTrait;
     use SecurityAwareTrait;
+    use LoggerAwareTrait;
+    use EntityManagerAwareTrait;
 
     public function __construct(
-        protected LoggerInterface $logger,
-        protected EntityManagerInterface $em,
         protected GarageService $garageService,
     ) {}
 
@@ -36,7 +38,7 @@ class GarageController extends EndpointController
     {
         $garage = $this->garageService->getCars($this->getUser()->getId());
 
-        return $this->buildEntityResponse($garage, $request, [], ['view']);
+        return $this->buildEntityResponse($garage, $request, [], ['garage']);
     }
 
     /**

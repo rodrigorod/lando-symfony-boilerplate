@@ -30,7 +30,7 @@ class GarageService
     /**
      * Inits a garage & persist it into database.
      *
-     * @param int $userId
+     * @param string $userId
      *  User unique identifier
      *
      * @throws Exception
@@ -38,7 +38,7 @@ class GarageService
      * @return Garage
      *  Garage
      */
-    public function initGarage(int $userId): Garage
+    public function initGarage(string $userId): Garage
     {
         $garage = new Garage();
         $garage->setUser($this->userRepository->find($userId));
@@ -56,7 +56,7 @@ class GarageService
     /**
      * Get user garage.
      */
-    public function getGarage(int $userId): ?Garage
+    public function getGarage(string $userId): ?Garage
     {
         return $this->garageRepository->findOneBy(['user' => $userId]);
     }
@@ -64,13 +64,13 @@ class GarageService
     /**
      * Get user garage with cars.
      *
-     * @param int $userId
+     * @param string $userId
      *  User unique identifier
      *
      * @return Collection
      *  Garage
      */
-    public function getCars(int $userId): Collection
+    public function getCars(string $userId): Collection
     {
         $garage = $this->garageRepository->findOneBy(['user' => $userId]);
         $cars = $this->carRepository->findBy(['garage' => $garage->getId()]);
