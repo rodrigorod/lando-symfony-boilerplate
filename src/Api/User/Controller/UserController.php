@@ -56,7 +56,17 @@ class UserController extends EndpointController
 
         $this->logger->info(sprintf('UserController::register - User %s registered', $user->getUserIdentifier()));
 
-        return $this->buildEntityResponse($user, $request);
+        return $this->buildEntityResponse($user, $request, [], ['user']);
+    }
+
+    /**
+     * @Route("/{username}", name="get", priority=-100)
+     *
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function get(User $user, Request $request): Response
+    {
+        return $this->buildEntityResponse($user, $request, [], ['user']);
     }
 
     /**
@@ -82,65 +92,7 @@ class UserController extends EndpointController
 
         $this->logger->info(sprintf('UserController::activate - User %s successfully activated', $user->getUserIdentifier()));
 
-        return $this->buildEntityResponse($user, $request);
-    }
-
-    /**
-     * @Route("/profile", name="profile_create", methods={"POST"})
-     */
-    public function createProfile(Request $request): Response
-    {
-        $requestContent = (array) $this->getContentFromRequest($request, true);
-        $user = $this->getUser();
-
-        if (!$user->isActive()) {
-            return $this->buildNotFoundResponse('E-mail must be confirmed in order to create profile.');
-        }
-
-        if (null !== $user->getProfile()) {
-            return $this->buildNotFoundResponse('User already has a profile.');
-        }
-
-        $profile = new Profile($requestContent['image'], $requestContent['firstName'], $requestContent['lastName']);
-
-        $user->setProfile($profile);
-
-        try {
-            $this->em->flush();
-        } catch (Exception $e) {
-            $this->logger->error(sprintf('UserController::createProfile - %s', $e->getMessage()));
-
-            return $this->buildNotFoundResponse('An error occurred.');
-        }
-
-        $this->logger->info(sprintf('UserController::createProfile - User %s profile created.', $user->getUserIdentifier()));
-
-        return $this->buildEntityResponse($user, $request);
-    }
-
-    /**
-     * @Route("/profile", name="profile", methods={"GET"})
-     */
-    public function getProfile(Request $request): Response
-    {
-        $user = $this->getUser();
-
-        if (null === $user->getProfile()) {
-            return $this->buildNotFoundResponse('User has no profile.');
-        }
-
-        return $this->buildEntityResponse($user->getProfile(), $request);
-    }
-
-    /**
-     * @Route("/profile/{id}", name="profile_external", methods={"GET"})
-     */
-    public function getExternalProfile(User $user, Request $request): Response
-    {
-        if (null === $user->getProfile()) {
-            return $this->buildNotFoundResponse('User has no profile.');
-        }
-
-        return $this->buildEntityResponse($user->getProfile(), $request);
+        return $this->buildEntityResponse($user, $request, [], ['user']);
     }
 }
+
