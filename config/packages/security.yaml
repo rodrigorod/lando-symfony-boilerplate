@@ -29,6 +29,7 @@ security:
             security: false
 
     access_control:
+      - { path: ^/api/doc, roles: PUBLIC_ACCESS }
       - { path: ^/api/user, roles: PUBLIC_ACCESS }
       - { path: ^/api/club/list, roles: PUBLIC_ACCESS }
       - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
