@@ -2,6 +2,8 @@
 
 namespace App\Api\Club\Entity;
 
+use App\Api\Category\Entity\Category;
+use App\Api\Post\Entity\Post;
 use App\Api\Post\Entity\PostInterface;
 use App\Api\User\Entity\User;
 use App\Api\User\Entity\UserInterface;
@@ -12,16 +14,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Api\Post\Entity\Post;
 
 /**
  * Class Club.
  *
  * @ORM\Table(name="club")
  * @ORM\Entity(repositoryClass=ClubRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Club implements ClubInterface
 {
@@ -39,8 +43,35 @@ class Club implements ClubInterface
      * @Assert\NotNull()
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="id",
+     *     nullable=false,
+     *     type="string",
+     *     format="uid",
+     *     description="Unique identifier.",
+     *     example="1ed42fe2-16f6-6368-98b6-d93168bb499c",
+     * )
      */
     protected Uuid $id;
+
+    /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\Type("string")
+     * @Assert\NotNull()
+     *
+     * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="name",
+     *     nullable=false,
+     *     type="string",
+     *     description="Club name.",
+     *     example="My amazing club",
+     * )
+     */
+    protected string $name;
 
     /**
      * Club slug.
@@ -52,18 +83,17 @@ class Club implements ClubInterface
      * @Assert\NotNull()
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="slug",
+     *     nullable=false,
+     *     type="string",
+     *     format="slug",
+     *     description="Club slug.",
+     *     example="my-amazing-club",
+     * )
      */
     protected string $slug;
-
-    /**
-     * @ORM\Column(type="string")
-     *
-     * @Assert\Type("string")
-     * @Assert\NotNull()
-     *
-     * @Groups({"view", "profile"})
-     */
-    protected string $name;
 
     /**
      * Club banner image.
@@ -74,6 +104,15 @@ class Club implements ClubInterface
      * @Assert\NotNull()
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="bannerImage",
+     *     nullable=false,
+     *     type="string",
+     *     description="Club banner image",
+     *     example="banner.png",
+     *     default="default.png",
+     * )
      */
     protected string $bannerImage = 'default.png';
 
@@ -86,6 +125,15 @@ class Club implements ClubInterface
      * @Assert\NotNull()
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="image",
+     *     nullable=false,
+     *     type="string",
+     *     description="Club image.",
+     *     example="image.png",
+     *     default="default.png",
+     * )
      */
     protected string $image = 'default.png';
 
@@ -98,6 +146,14 @@ class Club implements ClubInterface
      * @Assert\NotNull()
      *
      * @Groups({"view"})
+     *
+     * @OA\Property(
+     *     property="description",
+     *     nullable=false,
+     *     type="string",
+     *     description="Club description",
+     *     example="My amazing club description !",
+     * )
      */
     protected string $description;
 
@@ -110,6 +166,14 @@ class Club implements ClubInterface
      * @Assert\NotNull()
      *
      * @Groups({"view"})
+     *
+     * @OA\Property(
+     *     property="location",
+     *     nullable=false,
+     *     type="string",
+     *     description="Club location.",
+     *     example="bern",
+     * )
      */
     protected string $location;
 
@@ -123,6 +187,15 @@ class Club implements ClubInterface
      * @Assert\NotNull()
      *
      * @Groups({"view"})
+     *
+     * @OA\Property(
+     *     property="owner",
+     *     nullable=false,
+     *     type="object",
+     *     allOf={
+     *          @OA\Schema(ref=@Model(type=User::class))
+     *     },
+     * )
      */
     protected UserInterface $owner;
 
@@ -135,21 +208,34 @@ class Club implements ClubInterface
      * @Assert\Type("array")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"read"})
+     *
+     * @OA\Property(
+     *     property="members",
+     *     nullable=false,
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=User::class)),
+     * )
      */
     protected Collection $members;
 
     /**
      * Club categories.
      *
-     * @ORM\Column(type="array")
-     *
-     * @Assert\Type("array")
-     * @Assert\NotNull
+     * @ORM\ManyToMany(targetEntity=Category::class, inversedBy="clubs")
+     * @ORM\JoinTable(name="club_categories")
+     * @Assert\NotNull()
      *
      * @Groups({"view"})
+     *
+     * @OA\Property(
+     *     property="categories",
+     *     nullable=false,
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=Category::class)),
+     * )
      */
-    protected array $categories = [];
+    protected Collection $categories;
 
     /**
      * Club posts.
@@ -159,15 +245,61 @@ class Club implements ClubInterface
      * @Assert\Type("array")
      * @Assert\NotNull()
      *
-     * @Groups({"view"})
+     * @Groups({"read"})
+     *
+     * @OA\Property(
+     *     property="posts",
+     *     nullable=false,
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=Post::class)),
+     * )
      */
     protected Collection $posts;
+
+    /**
+     * Club members count.
+     *
+     * @Assert\Type("integer")
+     * @Assert\GreaterThanOrEqual(0)
+     * @Assert\NotNull()
+     *
+     * @Groups({"list"})
+     *
+     * @OA\Property(
+     *     property="membersCount",
+     *     nullable=false,
+     *     type="integer",
+     *     example="100",
+     *     default="0",
+     * )
+     */
+    protected int $membersCount = 0;
+
+    /**
+     * Club members count.
+     *
+     * @Assert\Type("integer")
+     * @Assert\GreaterThanOrEqual(0)
+     * @Assert\NotNull()
+     *
+     * @Groups({"list"})
+     *
+     * @OA\Property(
+     *     property="postsCount",
+     *     nullable=false,
+     *     type="integer",
+     *     example="100",
+     *     default="0",
+     * )
+     */
+    protected int $postsCount = 0;
 
     public function __construct(array $values = [])
     {
         $this->createdAt = new DateTime();
         $this->members = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->categories = new ArrayCollection();
 
         foreach ([
             'name',
@@ -180,6 +312,14 @@ class Club implements ClubInterface
                 $this->{$property} = $values[$property];
             }
         }
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new DateTime();
     }
 
     /**
@@ -339,7 +479,7 @@ class Club implements ClubInterface
     /**
      * {@inheritDoc}
      */
-    public function getCategories(): array
+    public function getCategories(): Collection
     {
         return $this->categories;
     }
@@ -372,5 +512,40 @@ class Club implements ClubInterface
         $this->posts->removeElement($post);
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMembersCount(): int
+    {
+        return $this->membersCount = $this->posts->count();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPostsCount(): int
+    {
+        return $this->postsCount = $this->posts->count();
     }
 }

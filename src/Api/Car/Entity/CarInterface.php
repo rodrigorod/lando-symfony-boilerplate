@@ -5,7 +5,6 @@ namespace App\Api\Car\Entity;
 use App\Api\Category\Entity\Category;
 use App\Api\Garage\Entity\GarageInterface;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Uid\Uuid;
 
 /**
  * Interface CarInterface.
@@ -119,18 +118,26 @@ interface CarInterface
     /**
      * Car modifications.
      *
-     * @return array
+     * @return Collection<ModificationsInterface>
      *  Modifications
      */
-    public function getModifications(): array;
+    public function getModifications(): Collection;
 
     /**
-     * Set car modifications.
+     * Add modifications.
      *
-     * @param array $modifications
-     *  Modifications
+     * @param Modifications $modification
+     *  Modification
      */
-    public function setModifications(array $modifications): self;
+    public function addModification(Modifications $modification): self;
+
+    /**
+     * Remove modification.
+     *
+     * @param Modifications $modification
+     *  Modification
+     */
+    public function removeModification(Modifications $modification): self;
 
     /**
      * Car horsepower.

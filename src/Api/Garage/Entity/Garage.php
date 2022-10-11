@@ -11,14 +11,17 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass=GarageRepository::class)
- *
  * Class Garage.
+ *
+ * @ORM\Entity(repositoryClass=GarageRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Garage implements GarageInterface
 {
@@ -36,6 +39,15 @@ class Garage implements GarageInterface
      * @Assert\Type("integer")
      *
      * @Groups(groups={"create", "garage"})
+     *
+     * @OA\Property(
+     *     property="id",
+     *     nullable=false,
+     *     type="string",
+     *     format="uid",
+     *     description="Unique identifier.",
+     *     example="1ed42fe2-16f6-6368-98b6-d93168bb499c",
+     * )
      */
     protected Uuid $id;
 
@@ -45,6 +57,13 @@ class Garage implements GarageInterface
      * @ORM\OneToMany(targetEntity=Car::class, mappedBy="garage")
      *
      * @Groups(groups={"create", "garage"})
+     *
+     * @OA\Property(
+     *     property="cars",
+     *     description="Cars list.",
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=Car::class))
+     * ),
      */
     protected ?Collection $cars;
 
@@ -55,12 +74,29 @@ class Garage implements GarageInterface
      * @ORM\JoinColumn(nullable=false)
      *
      * @Groups(groups={"create"})
+     *
+     * @OA\Property(
+     *     property="user",
+     *     nullable=false,
+     *     type="object",
+     *     allOf={
+     *          @OA\Schema(ref=@Model(type=User::class))
+     *     },
+     * )
      */
     protected UserInterface $user;
 
     public function __construct() {
         $this->cars = new ArrayCollection();
         $this->createdAt = new DateTime();
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new DateTime();
     }
 
     /**

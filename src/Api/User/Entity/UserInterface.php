@@ -3,6 +3,7 @@
 namespace App\Api\User\Entity;
 
 use App\Api\Club\Entity\ClubInterface;
+use App\Api\Post\Entity\CommentInterface;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -120,5 +121,29 @@ interface UserInterface extends PasswordAuthenticatedUserInterface, UserSecurity
      *  Posts
      */
     public function getPosts(): Collection;
+
+    /**
+     * Get user liked comments.
+     *
+     * @return Collection<CommentInterface>
+     *  Liked comments
+     */
+    public function getLikedComments(): Collection;
+
+    /**
+     * Add liked comment to list.
+     *
+     * @param CommentInterface $comment
+     *  Comment
+     */
+    public function addLikedComment(CommentInterface $comment): self;
+
+    /**
+     * Remove liked comment from list.
+     *
+     * @param CommentInterface $comment
+     *  Comment
+     */
+    public function removeLikedComment(CommentInterface $comment): self;
 }
 

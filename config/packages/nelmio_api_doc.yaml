@@ -1,8 +1,8 @@
 nelmio_api_doc:
   documentation:
     servers:
-      - url: http://carmeet.lndo.site/
-        description: API over HTTP
+      - url: 'http://carmeet.lndo.site'
+        description: 'API'
     info:
       title: Carmeet API
       description: Carmeet API
@@ -19,5 +19,3 @@ nelmio_api_doc:
     default:
       path_patterns: # an array of regexps (document only routes under /api, except /api/doc)
         - ^/api(?!/doc$)
-      host_patterns: # document only routes with a host of the form api.*
-        - ^api\.

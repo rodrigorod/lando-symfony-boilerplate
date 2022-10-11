@@ -2,6 +2,7 @@
 
 namespace App\Api\Car\Entity;
 
+use App\Api\Category\Entity\Category;
 use App\Api\Garage\Entity\Garage;
 use App\Api\Garage\Entity\GarageInterface;
 use App\DependencyInjection\TimerAwareTrait;
@@ -10,14 +11,15 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Api\Category\Entity\Category;
 
 /**
  * @ORM\Entity(repositoryClass=CarRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  *
  * Class Car.
  */
@@ -52,6 +54,15 @@ class Car implements CarInterface
      * @Assert\Uuid()
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="id",
+     *     nullable=false,
+     *     type="string",
+     *     format="uid",
+     *     description="Car unique identifier.",
+     *     example="1ed42fe2-16f6-6368-98b6-d93168bb499c",
+     * )
      */
     protected Uuid $id;
 
@@ -63,6 +74,14 @@ class Car implements CarInterface
      * @Assert\Type(type="string")
      *
      * @Groups({"garage"})
+     *
+     * @OA\Property(
+     *     property="image",
+     *     nullable=true,
+     *     type="integer",
+     *     description="Car image.",
+     *     example="carimage.png",
+     * )
      */
     protected ?string $image = null;
 
@@ -75,6 +94,19 @@ class Car implements CarInterface
      * @Assert\NotBlank()
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="ownershipStatus",
+     *     nullable=false,
+     *     type="string",
+     *     enum={
+     *          Car::OWNERSHIP_STATUS_CURRENT,
+     *          Car::OWNERSHIP_STATUS_FOR_SALE,
+     *          Car::OWNERSHIP_STATUS_PREVIOUS,
+     *     },
+     *     description="Car ownership status.",
+     *     example="o",
+     * )
      */
     protected string $ownershipStatus;
 
@@ -87,6 +119,14 @@ class Car implements CarInterface
      * @Assert\NotBlank()
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="brand",
+     *     nullable=false,
+     *     type="string",
+     *     description="Car brand.",
+     *     example="nissan",
+     * )
      */
     protected string $brand;
 
@@ -99,6 +139,14 @@ class Car implements CarInterface
      * @Assert\NotBlank()
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="model",
+     *     nullable=false,
+     *     type="string",
+     *     description="Car model.",
+     *     example="r-34",
+     * )
      */
     protected string $model;
 
@@ -111,6 +159,14 @@ class Car implements CarInterface
      * @Assert\NotNull()
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="year",
+     *     nullable=false,
+     *     type="integer",
+     *     description="Car year.",
+     *     example="1998",
+     * )
      */
     protected int $year;
 
@@ -122,19 +178,36 @@ class Car implements CarInterface
      * @Assert\Type(type="string")
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="trim",
+     *     nullable=true,
+     *     type="string",
+     *     description="Car model trim.",
+     *     example="1.8-coupe",
+     * )
      */
     protected ?string $trim = null;
 
     /**
      * Car modifications.
      *
-     * @ORM\Column(type="array")
+     * @ORM\OneToMany(targetEntity=Modifications::class, mappedBy="car")
+     * @ORM\JoinTable(name="car_modifications")
      *
      * @Assert\Type(type="array")
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="modifications",
+     *     nullable=false,
+     *     type="array",
+     *     description="Car modifications.",
+     *     @OA\Items(ref=@Model(type=Modifications::class))
+     * )
      */
-    protected array $modifications = [];
+    protected Collection $modifications;
 
     /**
      * Car horsepower.
@@ -145,6 +218,14 @@ class Car implements CarInterface
      * @Assert\NotNull()
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="horsePower",
+     *     nullable=false,
+     *     type="integer",
+     *     description="Car horse power.",
+     *     example="443",
+     * )
      */
     protected int $horsePower;
 
@@ -157,6 +238,14 @@ class Car implements CarInterface
      * @Assert\NotNull()
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="torque",
+     *     nullable=false,
+     *     type="integer",
+     *     description="Car torque.",
+     *     example="500",
+     * )
      */
     protected int $torque;
 
@@ -168,6 +257,14 @@ class Car implements CarInterface
      * @Assert\Type(type="string")
      *
      * @Groups(groups={"create", "view", "garage"})
+     *
+     * @OA\Property(
+     *     property="description",
+     *     nullable=true,
+     *     type="string",
+     *     description="Car description.",
+     *     example="My amazing car description ...",
+     * )
      */
     protected ?string $description = null;
 
@@ -175,11 +272,30 @@ class Car implements CarInterface
      * Car garage.
      *
      * @ORM\ManyToOne(targetEntity=Garage::class, inversedBy="cars")
+     *
+     * @OA\Property(
+     *     property="garage",
+     *     nullable=true,
+     *     type="object",
+     *     allOf={
+     *          @OA\Schema(ref=@Model(type=Garage::class)),
+     *     },
+     * )
      */
     protected ?GarageInterface $garage = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=Category::class, inversedBy="cars")
+     * @ORM\JoinTable(name="car_categories")
+     *
+     * @Groups(groups={"view"})
+     *
+     * @OA\Property(
+     *     property="categories",
+     *     nullable=false,
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=Category::class))
+     * )
      */
     protected Collection $categories;
 
@@ -187,6 +303,7 @@ class Car implements CarInterface
     {
         $this->createdAt = new DateTime();
         $this->categories = new ArrayCollection();
+        $this->modifications = new ArrayCollection();
 
         foreach ([
             'ownershipStatus',
@@ -219,6 +336,14 @@ class Car implements CarInterface
     public function getId(): string
     {
         return $this->id;
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new DateTime();
     }
 
     /**
@@ -332,7 +457,7 @@ class Car implements CarInterface
     /**
      * {@inheritDoc}
      */
-    public function getModifications(): array
+    public function getModifications(): Collection
     {
         return $this->modifications;
     }
@@ -340,9 +465,21 @@ class Car implements CarInterface
     /**
      * {@inheritDoc}
      */
-    public function setModifications(array $modifications): self
+    public function addModification(Modifications $modification): self
     {
-        $this->modifications = $modifications;
+        if (!$this->modifications->contains($modification)) {
+            $this->modifications[] = $modification;
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function removeModification(Modifications $modification): self
+    {
+        $this->modifications->removeElement($modification);
 
         return $this;
     }
@@ -449,4 +586,3 @@ class Car implements CarInterface
         return $this;
     }
 }
-

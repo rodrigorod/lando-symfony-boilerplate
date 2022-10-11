@@ -4,6 +4,7 @@ namespace App\Api\User\Entity;
 
 use App\DependencyInjection\TimerAwareTrait;
 use DateTime;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -20,6 +21,14 @@ class Profile implements ProfileInterface
      * @Assert\Type("string")
      *
      * @Groups({"profile"})
+     *
+     * @OA\Property(
+     *     property="image",
+     *     nullable=false,
+     *     type="string",
+     *     description="Profile image.",
+     *     example="default.png",
+     * )
      */
     protected string $image;
 
@@ -30,6 +39,14 @@ class Profile implements ProfileInterface
      * @Assert\NotNull()
      *
      * @Groups({"profile"})
+     *
+     * @OA\Property(
+     *     property="firstName",
+     *     nullable=false,
+     *     type="string",
+     *     description="Profile first name.",
+     *     example="John",
+     * )
      */
     protected string $firstName;
 
@@ -40,6 +57,14 @@ class Profile implements ProfileInterface
      * @Assert\NotNull()
      *
      * @Groups({"profile"})
+     *
+     * @OA\Property(
+     *     property="lastName",
+     *     nullable=false,
+     *     type="string",
+     *     description="Profile last name.",
+     *     example="Doe",
+     * )
      */
     protected string $lastName;
 
@@ -50,6 +75,15 @@ class Profile implements ProfileInterface
      * @Assert\NotNull()
      *
      * @Groups({"profile"})
+     *
+     * @OA\Property(
+     *     property="interests",
+     *     nullable=false,
+     *     type="array",
+     *     description="Profile interests.",
+     *     example="'toto'",
+     *     @OA\Items(type="string"),
+     * )
      */
     protected array $interests = [];
 
@@ -60,6 +94,15 @@ class Profile implements ProfileInterface
      * @Assert\GreaterThanOrEqual(0)
      *
      * @Groups({"profile"})
+     *
+     * @OA\Property(
+     *     property="followersCount",
+     *     nullable=false,
+     *     type="integer",
+     *     description="Followers count.",
+     *     example="1000",
+     *     default="0",
+     * )
      */
     protected int $followersCount = 0;
 
@@ -70,6 +113,15 @@ class Profile implements ProfileInterface
      * @Assert\GreaterThanOrEqual(0)
      *
      * @Groups({"profile"})
+     *
+     * @OA\Property(
+     *     property="followingCount",
+     *     nullable=false,
+     *     type="integer",
+     *     description="Following count.",
+     *     example="1000",
+     *     default="0",
+     * )
      */
     protected int $followingCount = 0;
 

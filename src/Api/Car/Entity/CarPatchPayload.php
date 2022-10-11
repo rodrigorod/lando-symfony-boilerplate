@@ -2,6 +2,9 @@
 
 namespace App\Api\Car\Entity;
 
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
+
 /**
  * Class CarPatchPayload.
  */
@@ -9,51 +12,136 @@ class CarPatchPayload
 {
     /**
      * Car ownership status.
+     *
+     * @OA\Property(
+     *     property="ownershipStatus",
+     *     nullable=false,
+     *     type="string",
+     *     enum={
+     *          Car::OWNERSHIP_STATUS_CURRENT,
+     *          Car::OWNERSHIP_STATUS_FOR_SALE,
+     *          Car::OWNERSHIP_STATUS_PREVIOUS,
+     *     },
+     *     description="New car ownership status.",
+     *     example="s",
+     * )
      */
     protected ?string $ownershipStatus;
 
     /**
      * Car brand.
+     *
+     * @OA\Property(
+     *     property="brand",
+     *     nullable=true,
+     *     type="string",
+     *     description="New car brand.",
+     *     example="toyota",
+     * )
      */
     protected ?string $brand;
 
     /**
      * Car model.
+     *
+     * @OA\Property(
+     *     property="model",
+     *     nullable=true,
+     *     type="string",
+     *     description="New car model.",
+     *     example="supra",
+     * )
      */
     protected ?string $model;
 
     /**
      * Car year.
+     *
+     * @OA\Property(
+     *     property="year",
+     *     nullable=true,
+     *     type="integer",
+     *     description="New car year.",
+     *     example="1997",
+     * )
      */
     protected ?int $year;
 
     /**
      * Car modifications.
+     *
+     * @OA\Property(
+     *     property="modifications",
+     *     nullable=true,
+     *     type="array",
+     *     description="Car modifications.",
+     *     @OA\Items(ref=@Model(type=Modifications::class))
+     * )
      */
     protected ?array $modifications;
 
     /**
      * Car horsepower.
+     *
+     * @OA\Property(
+     *     property="horsePower",
+     *     nullable=true,
+     *     type="integer",
+     *     description="New car horse power.",
+     *     example="443",
+     * )
      */
     protected ?int $horsePower;
 
     /**
      * Car torque.
+     *
+     * @OA\Property(
+     *     property="torque",
+     *     nullable=true,
+     *     type="integer",
+     *     description="New car torque.",
+     *     example="500",
+     * )
      */
     protected ?int $torque;
 
     /**
      * Car image.
+     *
+     * @OA\Property(
+     *     property="image",
+     *     nullable=true,
+     *     type="integer",
+     *     description="New car image.",
+     *     example="carimage.png",
+     * )
      */
     protected ?string $image;
 
     /**
      * Car trim.
+     *
+     * @OA\Property(
+     *     property="trim",
+     *     nullable=true,
+     *     type="string",
+     *     description="Car model trim.",
+     *     example="1.8-break",
+     * )
      */
     protected ?string $trim;
 
     /**
      * Car description.
+     *
+     * @OA\Property(
+     *     property="description",
+     *     nullable=true,
+     *     type="string",
+     *     description="Car description.",
+     *     example="My amazing car description ...",
+     * )
      */
     protected ?string $description;
 

@@ -53,7 +53,7 @@ interface PostInterface
     public function getSlug(): string;
 
     /**
-     * Get likes media path.
+     * Get likesCount media path.
      *
      * @return string
      *  Path
@@ -61,20 +61,28 @@ interface PostInterface
     public function getMediaPath(): string;
 
     /**
-     * Get post likes.
-     *
-     * @return array
-     *  Likes
-     */
-    public function getLikes(): array;
-
-    /**
      * Get post comments.
      *
-     * @return array
+     * @return Collection<CommentInterface>
      *  Comments
      */
-    public function getComments(): array;
+    public function getComments(): Collection;
+
+    /**
+     * Add post comment.
+     *
+     * @param CommentInterface $comment
+     *  Comment
+     */
+    public function addComment(CommentInterface $comment): self;
+
+    /**
+     * Remove post comment.
+     *
+     * @param CommentInterface $comment
+     *  Comment
+     */
+    public function removeComment(CommentInterface $comment): self;
 
     /**
      * Get post creation date.

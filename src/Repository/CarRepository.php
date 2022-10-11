@@ -3,14 +3,15 @@
 namespace App\Repository;
 
 use App\Api\Car\Entity\Car;
+use App\Api\Car\Entity\CarInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Car>
  *
- * @method Car|null find($id, $lockMode = null, $lockVersion = null)
- * @method Car|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Car find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Car findOneBy(array $criteria, array $orderBy = null)
  * @method Car[]    findAll()
  * @method Car[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -37,5 +38,22 @@ class CarRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * Get all cars who have the same category.
+     *
+     * @return array<CarInterface>
+     */
+    public function getCarsByCategory(string $slug): array
+    {
+        return $this->createQueryBuilder('cars')
+            ->addSelect('cat')
+            ->leftJoin('cars.categories', 'cat')
+            ->where('cat.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

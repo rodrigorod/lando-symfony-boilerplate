@@ -2,6 +2,8 @@
 
 namespace App\Api\Club\Entity;
 
+use App\Api\Category\Entity\Category;
+use App\Api\Category\Entity\CategoryInterface;
 use App\Api\Post\Entity\PostInterface;
 use App\Api\User\Entity\UserInterface;
 use DateTimeInterface;
@@ -152,10 +154,10 @@ interface ClubInterface
     /**
      * Get club categories.
      *
-     * @return array
+     * @return Collection<CategoryInterface>
      *  Categories
      */
-    public function getCategories(): array;
+    public function getCategories(): Collection;
 
     /**
      * Get club posts.
@@ -181,4 +183,35 @@ interface ClubInterface
      */
     public function removePost(PostInterface $post): self;
 
+    /**
+     * Add club category.
+     *
+     * @param Category $category
+     *  Category
+     */
+    public function addCategory(Category $category): self;
+
+    /**
+     * Remove club category.
+     *
+     * @param Category $category
+     *  Category
+     */
+    public function removeCategory(Category $category): self;
+
+    /**
+     * Get members count.
+     *
+     * @return int
+     *  Count
+     */
+    public function getMembersCount(): int;
+
+    /**
+     * Get posts count.
+     *
+     * @return int
+     *  Count
+     */
+    public function getPostsCount(): int;
 }

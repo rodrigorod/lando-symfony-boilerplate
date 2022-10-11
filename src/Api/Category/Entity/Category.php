@@ -9,6 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -32,6 +34,15 @@ class Category implements CategoryInterface
      * @Assert\Type("integer")
      *
      * @Groups({"category", "list"})
+     *
+     * @OA\Property(
+     *     property="id",
+     *     nullable=false,
+     *     type="string",
+     *     format="uid",
+     *     description="Category unique identifier.",
+     *     example="1ed4326c-90ed-67f2-a419-6634hd892df",
+     * )
      */
     protected Uuid $id;
 
@@ -44,6 +55,14 @@ class Category implements CategoryInterface
      * @Assert\NotNull()
      *
      * @Groups({"category", "list"})
+     *
+     * @OA\Property(
+     *     property="name",
+     *     nullable=false,
+     *     type="string",
+     *     description="Category name.",
+     *     example="American Muscle",
+     * )
      */
     protected string $name;
 
@@ -57,6 +76,15 @@ class Category implements CategoryInterface
      * @Assert\NotNull()
      *
      * @Groups({"category", "list"})
+     *
+     * @OA\Property(
+     *     property="slug",
+     *     nullable=false,
+     *     type="string",
+     *     format="slug",
+     *     description="Category slug.",
+     *     example="american-muscle",
+     * )
      */
     protected string $slug;
 
@@ -66,6 +94,13 @@ class Category implements CategoryInterface
      * @ORM\ManyToMany(targetEntity=Club::class, inversedBy="categories")
      *
      * @Groups({"category"})
+     *
+     * @OA\Property(
+     *     property="clubs",
+     *     nullable=false,
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=Club::class)),
+     * )
      */
     protected Collection $clubs;
 
@@ -75,6 +110,13 @@ class Category implements CategoryInterface
      * @ORM\ManyToMany(targetEntity=Car::class, inversedBy="categories")
      *
      * @Groups({"category"})
+     *
+     * @OA\Property(
+     *     property="cars",
+     *     nullable=false,
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=Car::class)),
+     * )
      */
     protected Collection $cars;
 

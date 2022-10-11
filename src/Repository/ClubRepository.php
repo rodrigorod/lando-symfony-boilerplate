@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Api\Club\Entity\Club;
+use App\Api\Club\Entity\ClubInterface;
+use App\Api\User\Entity\UserInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,5 +40,22 @@ class ClubRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * Get all clubs who have the same category.
+     *
+     * @return array<ClubInterface>
+     */
+    public function getClubsByCategory(string $slug): array
+    {
+        return $this->createQueryBuilder('club')
+            ->addSelect('cat')
+            ->leftJoin('club.categories', 'cat')
+            ->where('cat.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

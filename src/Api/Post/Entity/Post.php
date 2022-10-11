@@ -6,11 +6,16 @@ use App\Api\Club\Entity\Club;
 use App\Api\Club\Entity\ClubInterface;
 use App\Api\User\Entity\User;
 use App\Api\User\Entity\UserInterface;
+use App\DependencyInjection\LikesAwareTrait;
+use App\DependencyInjection\TimerAwareTrait;
 use App\Repository\PostRepository;
 use DateTime;
 use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,6 +28,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Post implements PostInterface
 {
+    use LikesAwareTrait;
+
     /**
      * Post id.
      *
@@ -35,6 +42,15 @@ class Post implements PostInterface
      * @Assert\NotNull()
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="id",
+     *     nullable=false,
+     *     type="string",
+     *     format="uid",
+     *     description="Post unique identifier",
+     *     example="1ed4326c-90ed-67f2-a419-6634hd892df",
+     * )
      */
     protected Uuid $id;
 
@@ -47,6 +63,15 @@ class Post implements PostInterface
      * @Assert\NotNull()
      *
      * @Groups({"view"})
+     *
+     * @OA\Property(
+     *     property="user",
+     *     nullable=false,
+     *     type="object",
+     *     allOf={
+     *          @OA\Schema(ref=@Model(type=User::class)),
+     *     }
+     * )
      */
     protected UserInterface $user;
 
@@ -59,6 +84,14 @@ class Post implements PostInterface
      * @Assert\NotNull()
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="name",
+     *     nullable=false,
+     *     type="string",
+     *     description="Post name/title.",
+     *     example="My amazing new Post !",
+     * )
      */
     protected string $name;
 
@@ -72,6 +105,15 @@ class Post implements PostInterface
      * @Assert\NotNull()
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="slug",
+     *     nullable=false,
+     *     type="string",
+     *     format="slug",
+     *     description="Post slug.",
+     *     example="my-amazing-new-post",
+     * )
      */
     protected string $slug;
 
@@ -84,26 +126,33 @@ class Post implements PostInterface
      * @Assert\NotNull()
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="mediaPath",
+     *     nullable=false,
+     *     type="string",
+     *     description="Post image/video.",
+     *     example="car.png",
+     * )
      */
     protected string $mediaPath;
 
     /**
-     * Post likes.
-     *
-     * @ORM\Column(type="array")
-     *
-     * @Groups({"view", "profile"})
-     */
-    protected array $likes = [];
-
-    /**
      * Post comments.
      *
-     * @ORM\Column(type="array")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post")
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="comments",
+     *     nullable=false,
+     *     type="array",
+     *     description="Post comments.",
+     *     @OA\Items(ref=@Model(type=Comment::class))
+     * )
      */
-    protected array $comments = [];
+    protected Collection $comments;
 
     /**
      * Post creation date.
@@ -111,6 +160,15 @@ class Post implements PostInterface
      * @ORM\Column(type="datetime")
      *
      * @Groups({"view", "profile"})
+     *
+     * @OA\Property(
+     *     property="createdAt",
+     *     nullable=false,
+     *     type="string",
+     *     format="date",
+     *     description="Post creation date.",
+     *     example="2022-10-04T13:33:00",
+     * )
      */
     protected DateTimeInterface $createdAt;
 
@@ -119,8 +177,18 @@ class Post implements PostInterface
      * @ORM\JoinColumn(name="club_id", referencedColumnName="id")
      *
      * @Groups({"profile"})
+     *
+     * @OA\Property(
+     *     property="club",
+     *     nullable=false,
+     *     type="object",
+     *     allOf={
+     *          @OA\Schema(ref=@Model(type=Club::class))
+     *     }
+     * )
      */
     protected ClubInterface $club;
+
 
     public function __construct(array $values = []) {
         foreach ([
@@ -186,17 +254,31 @@ class Post implements PostInterface
     /**
      * {@inheritDoc}
      */
-    public function getLikes(): array
+    public function getComments(): Collection
     {
-        return $this->likes;
+        return $this->comments;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getComments(): array
+    public function addComment(CommentInterface $comment): self
     {
-        return $this->comments;
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function removeComment(CommentInterface $comment): self
+    {
+        $this->comments->removeElement($comment);
+
+        return $this;
     }
 
     /**
