@@ -70,7 +70,3 @@ lando composer test-phpstan
 lando composer test-phpunit
 lando composer test-twig
 ```
-
-## Database structure (not 100% exact9
-
-![ERD Image](https://iili.io/tppGRf.png)
