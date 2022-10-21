@@ -73,4 +73,4 @@ lando composer test-twig
 
 ## Database structure (not 100% exact9
 
-![ERD Image]([https://freeimage.host/i/tppGRf](https://iili.io/tppGRf.png])
+![ERD Image](https://iili.io/tppGRf.png)
